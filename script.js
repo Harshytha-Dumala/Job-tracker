@@ -1,27 +1,37 @@
+const API_URL = "http://localhost:8080/api/jobs";
+
 let form = document.getElementById("jobForm");
 let jobList = document.getElementById("jobList");
 let filter = document.getElementById("filterStatus");
-
 let jobs = [];
 let count = 1;
 
-form.addEventListener("submit", function(e){
-    e.preventDefault();
+async function loadJobs(){
+    let res = await fetch(API_URL);
+    jobs = await res.json();
+    displayJobs(jobs);
+}
 
+form.addEventListener("submit", async function(e){
+    e.preventDefault();
     let company = document.getElementById("company").value;
     let role = document.getElementById("role").value;
     let status = document.getElementById("status").value;
 
-    jobs.push({company, role, status});
-    displayJobs(jobs);
+    await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({company, role, status})
+    });
+
     form.reset();
+    loadJobs();
 });
 
 function displayJobs(data){
     jobList.innerHTML="";
     count=1;
-
-    data.forEach((job,index)=>{
+    data.forEach((job)=>{
         jobList.innerHTML += `
         <tr>
             <td>${count++}</td>
@@ -29,20 +39,19 @@ function displayJobs(data){
             <td>${job.role}</td>
             <td>${job.status}</td>
             <td>
-                <button class="delete-btn" onclick="deleteJob(${index})">Delete</button>
+                <button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button>
             </td>
         </tr>`;
     });
 }
 
-function deleteJob(i){
-    jobs.splice(i,1);
-    displayJobs(jobs);
+async function deleteJob(id){
+    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    loadJobs();
 }
 
 function filterJobs(){
     let value = filter.value;
-
     if(value==="all"){
         displayJobs(jobs);
     }else{
@@ -58,6 +67,7 @@ function sortJobs(type){
     else if(type==="za"){
         jobs.sort((a,b)=>b.company.localeCompare(a.company));
     }
-
     displayJobs(jobs);
 }
+
+loadJobs();
