@@ -2,6 +2,7 @@ package com.jobtracker.jobtracker.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDate;
 
 @Entity
 public class Job {
@@ -19,6 +20,13 @@ public class Job {
     @NotBlank(message = "Status is required")
     private String status;
 
+    private LocalDate dateApplied;
+
+    @PrePersist
+    protected void onCreate() {
+        dateApplied = LocalDate.now();
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -30,4 +38,7 @@ public class Job {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public LocalDate getDateApplied() { return dateApplied; }
+    public void setDateApplied(LocalDate dateApplied) { this.dateApplied = dateApplied; }
 }

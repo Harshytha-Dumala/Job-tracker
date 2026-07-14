@@ -45,13 +45,13 @@ function displayJobs(data){
                     <option ${job.status==="Offer"?"selected":""}>Offer</option>
                 </select>
             </td>
+            <td>${job.dateApplied ?? "-"}</td>
             <td>
                 <button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button>
             </td>
         </tr>`;
     });
 }
-
 async function deleteJob(id){
     await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     loadJobs();

@@ -1,5 +1,6 @@
 package com.jobtracker.jobtracker.controller;
 
+import com.jobtracker.jobtracker.exception.JobNotFoundException;
 import com.jobtracker.jobtracker.model.Job;
 import com.jobtracker.jobtracker.repository.JobRepository;
 import jakarta.validation.Valid;
@@ -28,7 +29,7 @@ public class JobController {
 
     @PutMapping("/{id}")
     public Job updateJob(@PathVariable Long id, @Valid @RequestBody Job updatedJob) {
-        Job job = jobRepository.findById(id).orElseThrow();
+        Job job = jobRepository.findById(id).orElseThrow(() -> new JobNotFoundException(id));
         job.setCompany(updatedJob.getCompany());
         job.setRole(updatedJob.getRole());
         job.setStatus(updatedJob.getStatus());
@@ -37,6 +38,9 @@ public class JobController {
 
     @DeleteMapping("/{id}")
     public void deleteJob(@PathVariable Long id) {
+        if (!jobRepository.existsById(id)) {
+            throw new JobNotFoundException(id);
+        }
         jobRepository.deleteById(id);
     }
 }
