@@ -2,6 +2,7 @@ package com.jobtracker.jobtracker.controller;
 
 import com.jobtracker.jobtracker.model.Job;
 import com.jobtracker.jobtracker.repository.JobRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +22,12 @@ public class JobController {
     }
 
     @PostMapping
-    public Job addJob(@RequestBody Job job) {
+    public Job addJob(@Valid @RequestBody Job job) {
         return jobRepository.save(job);
     }
 
     @PutMapping("/{id}")
-    public Job updateJob(@PathVariable Long id, @RequestBody Job updatedJob) {
+    public Job updateJob(@PathVariable Long id, @Valid @RequestBody Job updatedJob) {
         Job job = jobRepository.findById(id).orElseThrow();
         job.setCompany(updatedJob.getCompany());
         job.setRole(updatedJob.getRole());

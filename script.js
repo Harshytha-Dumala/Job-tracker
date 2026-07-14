@@ -37,7 +37,14 @@ function displayJobs(data){
             <td>${count++}</td>
             <td>${job.company}</td>
             <td>${job.role}</td>
-            <td>${job.status}</td>
+            <td>
+                <select onchange="updateStatus(${job.id}, this.value)">
+                    <option ${job.status==="Applied"?"selected":""}>Applied</option>
+                    <option ${job.status==="Interview"?"selected":""}>Interview</option>
+                    <option ${job.status==="Rejected"?"selected":""}>Rejected</option>
+                    <option ${job.status==="Offer"?"selected":""}>Offer</option>
+                </select>
+            </td>
             <td>
                 <button class="delete-btn" onclick="deleteJob(${job.id})">Delete</button>
             </td>
@@ -49,7 +56,15 @@ async function deleteJob(id){
     await fetch(`${API_URL}/${id}`, { method: "DELETE" });
     loadJobs();
 }
-
+async function updateStatus(id, newStatus){
+    let job = jobs.find(j => j.id === id);
+    await fetch(`${API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({company: job.company, role: job.role, status: newStatus})
+    });
+    loadJobs();
+}
 function filterJobs(){
     let value = filter.value;
     if(value==="all"){
