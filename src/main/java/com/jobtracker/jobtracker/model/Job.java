@@ -3,7 +3,7 @@ package com.jobtracker.jobtracker.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDate;
-
+@Table(name = "job", uniqueConstraints = @UniqueConstraint(columnNames = {"company", "role"}))
 @Entity
 public class Job {
 
